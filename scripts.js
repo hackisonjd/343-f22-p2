@@ -30,6 +30,29 @@ const wmo = Object.freeze( {
 }
 );
 
+    
+function getLocation() {
+
+    function success(position) {
+        const latitude  = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        const weatherAPIURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&timezone=America%2FNew_York`;
+        console.log(weatherAPIURL);
+    }
+
+    function error() {
+        console.log('Unable to retrieve your location');
+    }
+
+    if(!navigator.geolocation) {
+        console.log('Geolocation is not supported by your browser');
+    } else {
+        console.log('Locating…');
+        navigator.geolocation.getCurrentPosition(success, error);
+    }
+}
+
 var date = new Date();
 var time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 console.log("Time: " + time);
@@ -39,6 +62,11 @@ var timePlacement = document.getElementById('navbarText').appendChild(document.c
 timePlacement.classList.add('navbar-text');
 timePlacement.classList.add('justify-content-end');
 timePlacement.innerHTML = time;
+
+// Find user's location and display it in the right panel.
+window.onload = function() {
+    getLocation();
+}
 
 var weatherRequest = new XMLHttpRequest();
 

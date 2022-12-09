@@ -30,16 +30,15 @@ const wmo = Object.freeze( {
 }
 );
 
+var date = new Date();
+var time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+console.log("Time: " + time);
 
-const app = document.getElementById('root');
-const logo = document.createElement('img');
-logo.src = 'images/bop.jpg';
 
-const container = document.createElement('div');
-container.setAttribute('class', 'container');
-
-app.appendChild(logo);
-app.appendChild(container);
+var timePlacement = document.getElementById('navbarText').appendChild(document.createElement('span'));
+timePlacement.classList.add('navbar-text');
+timePlacement.classList.add('justify-content-end');
+timePlacement.innerHTML = time;
 
 var weatherRequest = new XMLHttpRequest();
 
@@ -54,30 +53,42 @@ weatherRequest.onload = function () {
 
     if (weatherRequest.status >= 200 && weatherRequest.status < 400) {
 
-        var date = new Date();
-        var time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-        console.log("Time: " + time);
-
         var status = wmo[weatherData.current_weather.weathercode][0];
-        console.log("Status: " + status);
+        status = "<h4>" + status + "</h4>";
 
         var current_temp = weatherData.current_weather.temperature;
-        console.log("Current Temp: " + current_temp + "°F");
+        current_temp = current_temp + "°F";
 
         var high_temp = weatherData.daily.temperature_2m_max[0];
-        console.log("High: " + high_temp + "°F");
+        high_temp = "<h4>Low:  </h4>" +  high_temp + "°F";
 
         var low_temp = weatherData.daily.temperature_2m_min[0];
-        console.log("Low: " + low_temp + "°F");
+        low_temp = "<h4>High:  </h4>" + low_temp + "°F";
 
-        var icon = wmo[weatherData.current_weather.weathercode][1];
-        console.log("Icon: " + icon);      
+        const weathercode_img = document.createElement('img');
+        weathercode_img.src = wmo[weatherData.current_weather.weathercode][1]; 
+        weathercode_img.style.height = '100px';
+        weathercode_img.style.width = '100px';  
+        
+        // Left panel, contains today's high and low temps.
+        var leftPanel = document.getElementById('leftPanel');
+        leftPanel.innerHTML = "<h4>TODAY</h4>" + high_temp + "<hr>" + low_temp;
+
+        // Right panel, contains current temperature and city name.
+        var rightPanel = document.getElementById('rightPanel');
+        rightPanel.innerHTML = "Harrisonburg, VA<h4>CURRENTLY</h4><h2>" + current_temp + "</h2>";
+
+        var mainPanel = document.getElementById('mainPanel');
+        mainPanel.appendChild(weathercode_img);
+        mainPanel.appendChild(document.createElement('br'));
+        mainPanel.innerHTML = mainPanel.innerHTML + status;
+
         
     } else {
         console.log('error');
     }
 
-    
+
 
 }
 

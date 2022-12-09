@@ -30,15 +30,26 @@ const wmo = Object.freeze( {
 }
 );
 
-    
+
+var date = new Date();
+var time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+console.log("Time: " + time);
+
+
+var timePlacement = document.getElementById('navbarText').appendChild(document.createElement('span'));
+timePlacement.classList.add('navbar-text');
+timePlacement.classList.add('justify-content-end');
+timePlacement.innerHTML = time;
+
+// Find user's location and display it in the right panel.
+
 function getLocation() {
 
     function success(position) {
         const latitude  = position.coords.latitude;
         const longitude = position.coords.longitude;
 
-        const weatherAPIURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&timezone=America%2FNew_York`;
-        console.log(weatherAPIURL);
+        console.log(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&timezone=America%2FNew_York`);
     }
 
     function error() {
@@ -53,19 +64,8 @@ function getLocation() {
     }
 }
 
-var date = new Date();
-var time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-console.log("Time: " + time);
-
-
-var timePlacement = document.getElementById('navbarText').appendChild(document.createElement('span'));
-timePlacement.classList.add('navbar-text');
-timePlacement.classList.add('justify-content-end');
-timePlacement.innerHTML = time;
-
-// Find user's location and display it in the right panel.
 window.onload = function() {
-    getLocation();
+    console.log(getLocation());
 }
 
 var weatherRequest = new XMLHttpRequest();

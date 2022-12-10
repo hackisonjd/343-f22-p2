@@ -29,96 +29,75 @@ const wmo = Object.freeze( {
     99: ['Thunderstorm with heavy hail', 'images/thunderstorm.svg']
 }
 );
-
-
+var searchString = '';
 var date = new Date();
 var time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 console.log("Time: " + time);
 
+// Place time variable in the right side of navbar.
+var timeElement = document.getElementById('time');
+timeElement.innerHTML = time;
 
-var timePlacement = document.getElementById('navbarText').appendChild(document.createElement('span'));
-timePlacement.classList.add('navbar-text');
-timePlacement.classList.add('justify-content-end');
-timePlacement.innerHTML = time;
+
 
 // Find user's location and display it in the right panel.
+if ('geolocation' in navigator) {
+    console.log('geolocation available');
+    navigator.geolocation.getCurrentPosition(function (position) {
+        console.log(position.coords.latitude, position.coords.longitude);
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        console.log(position)
 
-function getLocation() {
+        weatherRequest.open('GET', `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&timezone=America%2FNew_York`, true);
 
-    function success(position) {
-        const latitude  = position.coords.latitude;
-        const longitude = position.coords.longitude;
+        weatherRequest.onload = function () {
+        // Access JSON data here
+        var weatherData = JSON.parse(this.response);
 
-        console.log(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&timezone=America%2FNew_York`);
+        // Data to be used in the app.
+
+        if (weatherRequest.status >= 200 && weatherRequest.status < 400) {
+
+            var status = wmo[weatherData.current_weather.weathercode][0];
+            status = "<h4>" + status + "</h4>";
+
+            var current_temp = weatherData.current_weather.temperature;
+            current_temp = current_temp + "°F";
+
+            var high_temp = weatherData.daily.temperature_2m_max[0];
+            high_temp = "<h4>High:  </h4>" +  high_temp + "°F";
+
+            var low_temp = weatherData.daily.temperature_2m_min[0];
+            low_temp = "<h4>Low:  </h4>" + low_temp + "°F";
+
+            const weathercode_img = document.createElement('img');
+            weathercode_img.src = wmo[weatherData.current_weather.weathercode][1]; 
+            weathercode_img.style.height = '100px';
+            weathercode_img.style.width = '100px';  
+        
+            // Left panel, contains today's high and low temps.
+            var leftPanel = document.getElementById('leftPanel');
+            leftPanel.innerHTML = "<h4>TODAY</h4>" + high_temp + "<hr>" + low_temp;
+
+            // Right panel, contains current temperature and city name.
+            var rightPanel = document.getElementById('rightPanel');
+            rightPanel.innerHTML = `${lat}, ${lon}<h4>CURRENTLY</h4><h2>` + current_temp + `</h2>`;
+
+            var mainPanel = document.getElementById('mainPanel');
+            mainPanel.appendChild(weathercode_img);
+            mainPanel.appendChild(document.createElement('br'));
+            mainPanel.innerHTML = mainPanel.innerHTML + status;
+
+        
+        } else {
+            console.log('error');
+        }
     }
-
-    function error() {
-        console.log('Unable to retrieve your location');
-    }
-
-    if(!navigator.geolocation) {
-        console.log('Geolocation is not supported by your browser');
+    // Send request
+    weatherRequest.send();
+        });
     } else {
-        console.log('Locating…');
-        navigator.geolocation.getCurrentPosition(success, error);
-    }
+        console.log('geolocation not available');
 }
-
-window.onload = function() {
-    console.log(getLocation());
-}
-
 var weatherRequest = new XMLHttpRequest();
-
-// Open a new connection, using the GET request on the URL endpoint
-weatherRequest.open('GET', 'https://api.open-meteo.com/v1/forecast?latitude=38.43&longitude=-78.86&daily=weathercode,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&timezone=America%2FNew_York', true);
-
-weatherRequest.onload = function () {
-    // Access JSON data here
-    var weatherData = JSON.parse(this.response);
-
-    // Data to be used in the app.
-
-    if (weatherRequest.status >= 200 && weatherRequest.status < 400) {
-
-        var status = wmo[weatherData.current_weather.weathercode][0];
-        status = "<h4>" + status + "</h4>";
-
-        var current_temp = weatherData.current_weather.temperature;
-        current_temp = current_temp + "°F";
-
-        var high_temp = weatherData.daily.temperature_2m_max[0];
-        high_temp = "<h4>Low:  </h4>" +  high_temp + "°F";
-
-        var low_temp = weatherData.daily.temperature_2m_min[0];
-        low_temp = "<h4>High:  </h4>" + low_temp + "°F";
-
-        const weathercode_img = document.createElement('img');
-        weathercode_img.src = wmo[weatherData.current_weather.weathercode][1]; 
-        weathercode_img.style.height = '100px';
-        weathercode_img.style.width = '100px';  
-        
-        // Left panel, contains today's high and low temps.
-        var leftPanel = document.getElementById('leftPanel');
-        leftPanel.innerHTML = "<h4>TODAY</h4>" + high_temp + "<hr>" + low_temp;
-
-        // Right panel, contains current temperature and city name.
-        var rightPanel = document.getElementById('rightPanel');
-        rightPanel.innerHTML = "Harrisonburg, VA<h4>CURRENTLY</h4><h2>" + current_temp + "</h2>";
-
-        var mainPanel = document.getElementById('mainPanel');
-        mainPanel.appendChild(weathercode_img);
-        mainPanel.appendChild(document.createElement('br'));
-        mainPanel.innerHTML = mainPanel.innerHTML + status;
-
-        
-    } else {
-        console.log('error');
-    }
-
-
-
-}
-
-// Send request
-weatherRequest.send();

@@ -16,9 +16,9 @@
                     <img src="images/birdofparadise.svg" alt="logo" width="30" height="30" class="d-inline-block align-text-top">
                     Birds of Paradise
                     <span class="navbar-text" id="time"></span></a>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+                <form class="d-flex" id="form">
+                    <input class="form-control me-2" type="search" id="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" id="submit" type="submit">Search</button>
                 </form>
 
             </div>
@@ -27,14 +27,19 @@
 
     <div class="container-fluid text-center">
         <div class="row content">
-            <div class="col-sm-2 sidenav" id="leftPanel">
-                <h2>TODAY</h2>
+            <div class="col-sm-2 sidenav" id="left-panel">
+
+                <h4 id="high-temperature"></h4><br>
+                <h4 id="low-temperature"></h4><br>
             </div>
-            <div class="col-sm-8 text-left" id="mainPanel">
+            <div class="col-sm-8 text-left" id="main-panel">
+                <img id="weather-icon" src="images/sun-light.svg" width="100px" height="100px" alt="weather-icon"><br>
+                <h4 id="weather-status"></h4>
             </div>
-            <div class="col-sm-2 sidenav" id="rightPanel">
+            <div class="col-sm-2 sidenav" id="right-panel">
                 <p id="location"></p>
-                <h3>CURRENTLY</h3>
+                <h2 id="current-temperature"></h2>
+            </div>
         </div>
     </div>
 

@@ -69,6 +69,7 @@ async function weatherSearch(lat, lon) {
     .then(jsonResponse => parseData(jsonResponse));
 }
 
+// Parses promise data into the appropriate elements.
 function parseData(response) {
     console.log(response.current_weather.weathercode);
     const status = wmo[response.current_weather.weathercode][0];
@@ -83,6 +84,7 @@ function parseData(response) {
 
 }
 
+// Builds the page. If a new instance, then it will take the client's location. If not, then it will take the location from the search bar (TODO).
 function buildPage(status, current_temp, high_temp, low_temp, iconRef, locationElement) {
 
     const weatherStatus = document.getElementById('weather-status');
@@ -100,6 +102,7 @@ function buildPage(status, current_temp, high_temp, low_temp, iconRef, locationE
     
 }
 
+// Gets the client's location and passes it to the weatherSearch function.
 function locateClient() {
     if ('geolocation' in navigator) {
         console.log('geolocation available');
